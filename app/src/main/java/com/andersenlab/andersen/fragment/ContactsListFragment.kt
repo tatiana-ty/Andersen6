@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -116,7 +117,7 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
         return filterResultsData
     }
 
-    private fun updateAdapter(data: List<Person>) {
+    fun updateAdapter(data: List<Person>) {
         val adapter = ContactsAdapter(
             data as MutableList<Person>,
             requireContext()
@@ -185,9 +186,6 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
         if (savedInstanceState != null) {
             currentPosition = savedInstanceState.getInt("currentPosition", 0)
         }
-        if (isLandscape) {
-            showDetails(currentPosition)
-        }
     }
 
     private fun showDetails(index: Int) {
@@ -223,8 +221,6 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
             contactsData =
                 savedInstanceState.getParcelableArrayList<Person>("data") as ArrayList<Person>
             currentPosition = savedInstanceState.getInt("currentPosition")
-        } else {
-
         }
     }
 }
