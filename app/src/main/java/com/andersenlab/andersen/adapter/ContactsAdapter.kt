@@ -11,18 +11,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andersenlab.andersen.DiffCallback
 import com.andersenlab.andersen.R
-import com.andersenlab.andersen.fragment.ContactsListFragment
+import com.andersenlab.andersen.fragment.ContactsListFragment.Companion.contactsData
 import com.andersenlab.andersen.model.Person
 import com.andersenlab.andersen.utils.ItemTouchHelperAdapter
 import com.andersenlab.andersen.utils.ItemTouchHelperViewHolder
 import com.bumptech.glide.Glide
 
-
 class ContactsAdapter(
-    private val contactsData: MutableList<Person>,
-    private val context: Context
+        private val context: Context
 ) :
-    RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), ItemTouchHelperAdapter {
+        RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), ItemTouchHelperAdapter {
 
     private val data = mutableListOf<Person>()
 
@@ -31,7 +29,7 @@ class ContactsAdapter(
     }
 
     class MyViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
+            RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
         var name: TextView = itemView.findViewById(R.id.contactName)
         var picture: ImageView = itemView.findViewById(R.id.contactImage)
 
@@ -46,21 +44,21 @@ class ContactsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.contact_item, parent, false)
+                LayoutInflater.from(parent.context)
+                        .inflate(R.layout.contact_item, parent, false)
         return MyViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.name.text = data[position].name
         Glide.with(context)
-            .load(data[position].image)
-            .into(holder.picture)
+                .load(data[position].image)
+                .into(holder.picture)
         holder.itemView.setOnClickListener {
-            onClick(data[position], position)
+            onClick(holder.adapterPosition)
         }
         holder.itemView.setOnLongClickListener(View.OnLongClickListener {
-            onLongClick(data[position], position)
+            onLongClick(data[holder.adapterPosition], holder.adapterPosition)
             return@OnLongClickListener true
         }
         )
@@ -70,7 +68,7 @@ class ContactsAdapter(
         return data.size
     }
 
-    var onClick: (Person, Int) -> Unit = { _, _ -> }
+    var onClick: (Int) -> Unit = { _ -> }
 
     var onLongClick: (Person, Int) -> Unit = { _, _ -> }
 

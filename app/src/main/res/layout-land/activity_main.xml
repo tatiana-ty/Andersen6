@@ -6,13 +6,10 @@
     android:baselineAligned="false">
 
     <FrameLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/contacts"
         android:layout_width="0px"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:context=".ТвоеАктивити"
-        />
+        android:layout_weight="1" />
 
     <FrameLayout
         android:id="@+id/details"

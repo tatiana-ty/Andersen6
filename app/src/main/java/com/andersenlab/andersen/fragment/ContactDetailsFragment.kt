@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -66,6 +67,13 @@ class ContactDetailsFragment : Fragment() {
             phoneTextView.text = newPhone
             ContactsListFragment.contactsData[index].name = newName
             ContactsListFragment.contactsData[index].phone = newPhone
+            val fragment = requireActivity()
+                    .supportFragmentManager
+                    .findFragmentByTag("FirstFragment")
+            requireActivity().supportFragmentManager.beginTransaction()
+                    .detach(fragment!!)
+                    .attach(fragment)
+                    .commit()
         }
     }
 
@@ -75,6 +83,12 @@ class ContactDetailsFragment : Fragment() {
                 this.person = person
                 this.index = index
             }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().findViewById<FrameLayout>(R.id.contacts).visibility = View.VISIBLE
+        requireActivity().findViewById<FrameLayout>(R.id.details).visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -5,11 +5,16 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        xmlns:tools="http://schemas.android.com/tools"
+        android:visibility="gone"
+        android:id="@+id/details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"/>
+
+    <FrameLayout
         android:id="@+id/contacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ТвоеАктивити"
-        />
+        android:background="@color/white"/>
 
 </LinearLayout>

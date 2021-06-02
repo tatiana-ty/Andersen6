@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -31,7 +32,7 @@ import java.util.*
 
 class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
 
-    private var currentPosition = 1
+    private var currentPosition = 0
     private var isLandscape: Boolean = false
     private lateinit var contactsList: RecyclerView
     private var filterData: List<Person>? = ArrayList<Person>()
@@ -119,14 +120,13 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
 
     fun updateAdapter(data: List<Person>) {
         val adapter = ContactsAdapter(
-            data as MutableList<Person>,
             requireContext()
         )
         contactsList.layoutManager = LinearLayoutManager(activity!!.baseContext)
         contactsList.adapter = adapter
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
         itemTouchHelper.attachToRecyclerView(contactsList)
-        adapter.onClick = { _, position ->
+        adapter.onClick = { position ->
             currentPosition = position
             showDetails(currentPosition)
         }
@@ -199,9 +199,11 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
                 .addToBackStack(null)
                 .commit()
         } else {
+            requireActivity().findViewById<FrameLayout>(R.id.contacts).visibility = View.GONE
+            requireActivity().findViewById<FrameLayout>(R.id.details).visibility = View.VISIBLE
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(
-                    R.id.contacts,
+                    R.id.details,
                     ContactDetailsFragment.newInstance(contactsData[index], index)
                 )
                 .addToBackStack("")
@@ -210,7 +212,7 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt("currentContact", currentPosition)
+        outState.putInt("currentPosition", currentPosition)
         outState.putParcelableArrayList("data", ArrayList(contactsData))
         super.onSaveInstanceState(outState)
     }
