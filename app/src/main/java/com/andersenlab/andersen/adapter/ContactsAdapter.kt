@@ -11,16 +11,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.andersenlab.andersen.DiffCallback
 import com.andersenlab.andersen.R
-import com.andersenlab.andersen.fragment.ContactsListFragment.Companion.contactsData
 import com.andersenlab.andersen.model.Person
-import com.andersenlab.andersen.utils.ItemTouchHelperAdapter
-import com.andersenlab.andersen.utils.ItemTouchHelperViewHolder
 import com.bumptech.glide.Glide
 
 class ContactsAdapter(
+        private val contactsData: MutableList<Person>,
         private val context: Context
 ) :
-        RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), ItemTouchHelperAdapter {
+        RecyclerView.Adapter<ContactsAdapter.MyViewHolder>() {
 
     private val data = mutableListOf<Person>()
 
@@ -29,17 +27,9 @@ class ContactsAdapter(
     }
 
     class MyViewHolder(itemView: View) :
-            RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
+            RecyclerView.ViewHolder(itemView) {
         var name: TextView = itemView.findViewById(R.id.contactName)
         var picture: ImageView = itemView.findViewById(R.id.contactImage)
-
-        override fun onItemSelected() {
-            itemView.setBackgroundColor(Color.LTGRAY)
-        }
-
-        override fun onItemClear() {
-            itemView.setBackgroundColor(Color.WHITE)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -72,16 +62,7 @@ class ContactsAdapter(
 
     var onLongClick: (Person, Int) -> Unit = { _, _ -> }
 
-    override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        val newData = mutableListOf<Person>()
-        newData.addAll(contactsData)
-        newData.removeAt(fromPosition).apply {
-            newData.add(if (toPosition > fromPosition) toPosition - 1 else toPosition, this)
-        }
-        swap(newData)
-    }
-
-    override fun onItemDismiss(position: Int) {
+    fun onItemDismiss(position: Int) {
         val newData = mutableListOf<Person>()
         newData.addAll(contactsData)
         newData.removeAt(position)

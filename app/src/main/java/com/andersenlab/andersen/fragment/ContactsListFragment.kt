@@ -25,7 +25,6 @@ import com.andersenlab.andersen.R
 import com.andersenlab.andersen.adapter.ContactsAdapter
 import com.andersenlab.andersen.model.Person
 import com.andersenlab.andersen.retrofit.ContactsData
-import com.andersenlab.andersen.utils.ItemTouchHelperCallback
 import com.andersenlab.andersen.viewModel.ContactsListViewModel
 import java.util.*
 
@@ -96,6 +95,7 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
                 override fun afterTextChanged(s: Editable) {
                     if (s.toString() != "") {
                         filterData = getFilter(s.toString())
+                        println(filterData)
                         updateAdapter(filterData!!)
                     } else {
                         updateAdapter(contactsData)
@@ -120,12 +120,11 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
 
     fun updateAdapter(data: List<Person>) {
         val adapter = ContactsAdapter(
+                data as MutableList<Person>,
             requireContext()
         )
         contactsList.layoutManager = LinearLayoutManager(activity!!.baseContext)
         contactsList.adapter = adapter
-        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
-        itemTouchHelper.attachToRecyclerView(contactsList)
         adapter.onClick = { position ->
             currentPosition = position
             showDetails(currentPosition)
