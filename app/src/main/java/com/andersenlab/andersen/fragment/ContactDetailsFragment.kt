@@ -21,8 +21,8 @@ class ContactDetailsFragment : Fragment() {
     private var index = 0
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_contact_details, container, false)
     }
@@ -31,8 +31,8 @@ class ContactDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val imageView = view.findViewById<ImageView>(R.id.picture)
         Glide.with(requireContext())
-            .load(person.image)
-            .into(imageView)
+                .load(person.image)
+                .into(imageView)
         val nameTextView = view.findViewById<TextView>(R.id.name)
         nameTextView.text = person.name
         val editNameTextView = view.findViewById<TextView>(R.id.editName)
@@ -79,10 +79,10 @@ class ContactDetailsFragment : Fragment() {
 
     companion object {
         fun newInstance(person: Person, index: Int) =
-            ContactDetailsFragment().apply {
-                this.person = person
-                this.index = index
-            }
+                ContactDetailsFragment().apply {
+                    this.person = person
+                    this.index = index
+                }
     }
 
     override fun onDetach() {

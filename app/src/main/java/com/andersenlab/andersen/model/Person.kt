@@ -4,15 +4,15 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Person(
-    var name: String,
-    var phone: String,
-    var image: String
+        var name: String,
+        var phone: String,
+        var image: String
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!
+            parcel.readString()!!,
+            parcel.readString()!!,
+            parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

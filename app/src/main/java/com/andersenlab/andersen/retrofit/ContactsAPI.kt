@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface ContactsAPI {
     @GET("api/")
     fun getContacts(
-        @Query("results") results: Int,
-        @Query("inc") inc: String
+            @Query("results") results: Int,
+            @Query("inc") inc: String
     ): Call<ContactsServerResponseData>
 }

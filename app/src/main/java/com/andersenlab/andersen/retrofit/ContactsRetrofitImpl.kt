@@ -14,10 +14,10 @@ class ContactsRetrofitImpl {
 
     fun getRetrofitImpl(): ContactsAPI {
         val contactsRetrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-            .client(createOkHttpClient(ContactsInterceptor()))
-            .build()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+                .client(createOkHttpClient(ContactsInterceptor()))
+                .build()
         return contactsRetrofit.create(ContactsAPI::class.java)
     }
 

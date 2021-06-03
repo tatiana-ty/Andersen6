@@ -16,9 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andersenlab.andersen.R
@@ -28,19 +26,16 @@ import com.andersenlab.andersen.retrofit.ContactsData
 import com.andersenlab.andersen.viewModel.ContactsListViewModel
 import java.util.*
 
-
 class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
 
     private var currentPosition = 0
     private var isLandscape: Boolean = false
     private lateinit var contactsList: RecyclerView
-    private var filterData: List<Person>? = ArrayList<Person>()
-    private lateinit var itemTouchHelper: ItemTouchHelper
+    private var filterData: List<Person>? = ArrayList()
 
     companion object {
         var contactsData = arrayListOf<Person>()
-        fun newInstance() =
-            ContactsListFragment()
+        fun newInstance() = ContactsListFragment()
     }
 
     private val viewModel: ContactsListViewModel by lazy {
@@ -48,23 +43,31 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         if (savedInstanceState != null) {
             contactsData =
-                savedInstanceState.getParcelableArrayList<Person>("data") as ArrayList<Person>
+                    savedInstanceState.getParcelableArrayList<Person>("data") as ArrayList<Person>
             currentPosition = savedInstanceState.getInt("currentPosition")
         }
         if (contactsData.isNullOrEmpty()) {
             viewModel.getData()
-                .observe(viewLifecycleOwner, { renderData(it) })
+                    .observe(viewLifecycleOwner) { renderData(it) }
         }
         return inflater.inflate(R.layout.fragment_contacts_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isLandscape = (resources.configuration.orientation
+                == Configuration.ORIENTATION_LANDSCAPE)
+
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt("currentPosition", 0)
+        }
+
         contactsList = view.findViewById(R.id.contactsRecyclerView)
         init()
     }
@@ -72,40 +75,40 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
     private fun init() {
         val dividerItemDecoration = DividerItemDecoration(context, RecyclerView.VERTICAL)
         dividerItemDecoration.setDrawable(
-            ContextCompat.getDrawable(
-                requireActivity(),
-                R.drawable.divider
-            )!!
+                ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.divider
+                )!!
         )
         contactsList.addItemDecoration(dividerItemDecoration)
         updateAdapter(contactsData)
-        val search: EditText = view!!.findViewById(R.id.search)
+        val search: EditText = requireView().findViewById(R.id.search)
         search.setText("")
         search.addTextChangedListener(
-            object : TextWatcher {
-                override fun beforeTextChanged(
-                    charSequence: CharSequence,
-                    i: Int,
-                    i1: Int,
-                    i2: Int
-                ) {
-                }
-
-                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    if (s.toString() != "") {
-                        filterData = getFilter(s.toString())
-                        println(filterData)
-                        updateAdapter(filterData!!)
-                    } else {
-                        updateAdapter(contactsData)
+                object : TextWatcher {
+                    override fun beforeTextChanged(
+                            charSequence: CharSequence,
+                            i: Int,
+                            i1: Int,
+                            i2: Int
+                    ) {
                     }
-                }
-            })
+
+                    override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+                    override fun afterTextChanged(s: Editable) {
+                        if (s.toString() != "") {
+                            filterData = getFilter(s.toString())
+                            println(filterData)
+                            updateAdapter(filterData!!)
+                        } else {
+                            updateAdapter(contactsData)
+                        }
+                    }
+                })
     }
 
     private fun getFilter(charSequence: CharSequence?): ArrayList<Person>? {
-        val filterResultsData: ArrayList<Person> = ArrayList<Person>()
+        val filterResultsData: ArrayList<Person> = ArrayList()
         if (charSequence == null || charSequence.isEmpty()) {
             return null
         } else {
@@ -121,9 +124,9 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
     fun updateAdapter(data: List<Person>) {
         val adapter = ContactsAdapter(
                 data as MutableList<Person>,
-            requireContext()
+                requireContext()
         )
-        contactsList.layoutManager = LinearLayoutManager(activity!!.baseContext)
+        contactsList.layoutManager = LinearLayoutManager(requireActivity().baseContext)
         contactsList.adapter = adapter
         adapter.onClick = { position ->
             currentPosition = position
@@ -131,17 +134,17 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
         }
         adapter.onLongClick = { person, position ->
             AlertDialog.Builder(requireContext())
-                .setTitle("Do you really want do delete ${person.name}?")
-                .setNegativeButton(
-                    "Cancel"
-                ) { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .setPositiveButton(
-                    "Ok"
-                ) { _: DialogInterface?, _: Int ->
-                    adapter.onItemDismiss(position)
-                }
-                .create()
-                .show()
+                    .setTitle("Do you really want do delete ${person.name}?")
+                    .setNegativeButton(
+                            "Cancel"
+                    ) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                    .setPositiveButton(
+                            "Ok"
+                    ) { _: DialogInterface?, _: Int ->
+                        adapter.onItemDismiss(position)
+                    }
+                    .create()
+                    .show()
         }
         adapter.notifyDataSetChanged()
     }
@@ -154,9 +157,9 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
                 if (list != null) {
                     for (item in list) {
                         val person = Person(
-                            item.name.first + " " + item.name.last,
-                            item.phone,
-                            item.picture.large
+                                item.name.first + " " + item.name.last,
+                                item.phone,
+                                item.picture.large
                         )
                         contactsData.add(person)
                     }
@@ -176,37 +179,26 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
 
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        isLandscape = (resources.configuration.orientation
-                == Configuration.ORIENTATION_LANDSCAPE)
-
-        if (savedInstanceState != null) {
-            currentPosition = savedInstanceState.getInt("currentPosition", 0)
-        }
-    }
-
     private fun showDetails(index: Int) {
         if (isLandscape) {
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.details,
-                    ContactDetailsFragment.newInstance(contactsData[index], index)
-                )
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack(null)
-                .commit()
+                    .replace(
+                            R.id.details,
+                            ContactDetailsFragment.newInstance(contactsData[index], index)
+                    )
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .addToBackStack(null)
+                    .commit()
         } else {
             requireActivity().findViewById<FrameLayout>(R.id.contacts).visibility = View.GONE
             requireActivity().findViewById<FrameLayout>(R.id.details).visibility = View.VISIBLE
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.details,
-                    ContactDetailsFragment.newInstance(contactsData[index], index)
-                )
-                .addToBackStack("")
-                .commit()
+                    .replace(
+                            R.id.details,
+                            ContactDetailsFragment.newInstance(contactsData[index], index)
+                    )
+                    .addToBackStack("")
+                    .commit()
         }
     }
 
@@ -220,7 +212,7 @@ class ContactsListFragment : Fragment(), ContactsAdapter.Interaction {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
             contactsData =
-                savedInstanceState.getParcelableArrayList<Person>("data") as ArrayList<Person>
+                    savedInstanceState.getParcelableArrayList<Person>("data") as ArrayList<Person>
             currentPosition = savedInstanceState.getInt("currentPosition")
         }
     }

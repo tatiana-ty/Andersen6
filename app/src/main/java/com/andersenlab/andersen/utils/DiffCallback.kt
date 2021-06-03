@@ -1,11 +1,11 @@
-package com.andersenlab.andersen
+package com.andersenlab.andersen.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import com.andersenlab.andersen.model.Person
 
 class DiffCallback(
-    private val oldList: List<Person>,
-    private val newList: List<Person>
+        private val oldList: List<Person>,
+        private val newList: List<Person>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize() = oldList.size
